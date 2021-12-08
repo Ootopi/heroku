@@ -33,7 +33,8 @@ get_access_token()
 async function get_user(user_name) {
     const token = await get_access_token()
     let user = await cached_user(user_name)
-    if(!user) user = await request_user()
+    if(!user) user = await request_user(user_name)
+    console.log(user)
     return user
 }
 
@@ -41,7 +42,7 @@ async function cached_user(user_name) {
     if(!user_name || user_name.length === 0) return null
     return client.query(
         q.Get(q.Match(q.Index('user_by_login'), q.Casefold(user_name)))
-    ).then(result => result.data).catch(e => null)
+    ).then(result => result?.data).catch(e => null)
 }
 
 async function request_user(user_name) {
@@ -51,15 +52,21 @@ async function request_user(user_name) {
     
     const params = new URLSearchParams()
     params.append('login', encodeURIComponent(user_name))
-
+    console.log(`${TWITCH_USER_ENDPOINT}?${params.toString()}`)
     return fetch(`${TWITCH_USER_ENDPOINT}?${params.toString()}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Client-Id': TWITCH_CLIENT_ID,
         }
     })
-    .then(res => res.status == 200 ? res.json() : null)
-    .then(json => json?.data[0])
+    .then(res => {
+        console.log(res)
+        return res.status == 200 ? res.json() : null
+    })
+    .then(json => {
+        console.log(json)
+        return json?.data[0]
+    })
     .then(user => cache_user(user))
 }
 
