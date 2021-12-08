@@ -67,7 +67,7 @@ async function cache_user(user) {
     client.query(
          q.Let({
             match: q.Match(q.Index('user_by_id'), user.id),
-            data: { data: user }
+            data: { ttl: q.Time(new Date(Date.now() + (1000 * 60 * 60)).toISOString()), data: user }
             },
             q.If(
                 q.Exists(q.Var('match')),
@@ -86,6 +86,10 @@ app.get('/twitch/user/:user', (req, res) => {
 app.get('/twitch/user/:user/description', (req, res) => {
     if(!req.params.user) return
     get_user(req.params.user).then(user => res.send(user?.description))
+})
+app.get('/twitch/user/:user/force_update', (req, res) => {
+    if(!req.params.user) return
+    request_user(req.params.user).then(user => res.send(user))
 })
 
 app.listen(PORT)
