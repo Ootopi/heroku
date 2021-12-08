@@ -32,7 +32,9 @@ get_access_token()
 
 async function get_user(user_name) {
     const token = await get_access_token()
-    return await cached_user(user_name) ?? await request_user()
+    let user = await cached_user(user_name)
+    if(!user) user = await request_user()
+    return user
 }
 
 async function cached_user(user_name) {
