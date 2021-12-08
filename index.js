@@ -84,7 +84,7 @@ app.get('/twitch/user/:user', (req, res) => {
 })
 app.get('/twitch/user/:user/description', (req, res) => {
     if(!req.params.user) return
-    get_user(req.params.user).then(user => res.send(user.description))
+    get_user(req.params.user).then(user => res.send(user?.description))
 })
 
 app.listen(PORT)
