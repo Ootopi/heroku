@@ -34,7 +34,6 @@ async function get_user(user_name) {
     const token = await get_access_token()
     let user = await cached_user(user_name)
     if(!user) user = await request_user(user_name)
-    console.log(user)
     return user
 }
 
@@ -52,21 +51,14 @@ async function request_user(user_name) {
     
     const params = new URLSearchParams()
     params.append('login', encodeURIComponent(user_name))
-    console.log(`${TWITCH_USER_ENDPOINT}?${params.toString()}`)
     return fetch(`${TWITCH_USER_ENDPOINT}?${params.toString()}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Client-Id': TWITCH_CLIENT_ID,
         }
     })
-    .then(res => {
-        console.log(res)
-        return res.status == 200 ? res.json() : null
-    })
-    .then(json => {
-        console.log(json)
-        return json?.data[0]
-    })
+    .then(res => res.status == 200 ? res.json() : null)
+    .then(json => json?.data[0])
     .then(user => cache_user(user))
 }
 
