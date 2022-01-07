@@ -140,9 +140,12 @@ app.get('/twitch/user/:user/broadcaster_type', (req, res) => {
     if(!req.params.user) return
     request_user(req.params.user).then(user => res.send(user?.broadcaster_type))
 })
-app.get('/twitch/user/:user/drunk_description/:factor/:pre', (req, res) => {
+app.get('/twitch/user/:user/drunk_description/:factor', (req, res) => {
     if(!req.params.user) return
     request_user(req.params.user)
-        .then(user => res.send(drunkenify(req.params.pre + user?.description, req.params.factor)))
+        .then(user => res.send(drunkenify(user?.description, req.params.factor)))
+})
+app.get('/drunk/:text/:factor', (req, res) => {
+    res.send(drunkenify(req.params.text, req.params.factor))
 })
 app.listen(PORT)
