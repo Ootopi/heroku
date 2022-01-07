@@ -113,9 +113,9 @@ function neighbouring_key(key) {
     return is_upper ? key.toUpperCase() : key
 }
 
-function drunkenify(text, drunk_factor = 0.9) {
+function drunkenify(text, drunk_factor = 0.5) {
     return Array.from(text).map(x => {
-        if(Math.random() <= drunk_factor) return x
+        if(Math.random() >= drunk_factor) return x
         const r = Math.random()
         if(x == ' ') return r <= 0.5 ? '' : '  '
         return r < 0.05 ? '' : r < 0.4 ? neighbouring_key(x) : r < 0.8 ? x.toUpperCase() : x.repeat(rand_int(0, 4))
