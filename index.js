@@ -158,9 +158,11 @@ app.get('/valorant/:user/:id', (req, res) => {
             const script = $('script').get()[2].children[0].data
             const json = JSON.parse(script.substring(script.indexOf('{'), script.indexOf(';')))
             try {
-                const tier = json['stats']['segments'][`valorant|riot|${req.params.user}#${req.params.id}`]?.find(i => i.type === 'season')['stats']['rank']['metadata']['tierName']
+                const tier = json['stats']['segments'][`valorant|riot|${req.params.user.toLowerCase()}#${req.params.id.toLowerCase()}`]?.find(i => i.type === 'season')['stats']['rank']['metadata']['tierName']
                 res.send(tier)
-            } catch (e) {}
+            } catch (e) {
+                
+            }
         })
 })
 app.listen(PORT)
