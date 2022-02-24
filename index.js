@@ -1,8 +1,6 @@
-const { response } = require('express')
 const express = require('express')
 const faunadb = require('faunadb'), q = faunadb.query
 const fetch = require('node-fetch')
-const cheerio = require('cheerio')
 
 require('dotenv').config()
 
