@@ -1,6 +1,9 @@
+const { response } = require('express')
 const express = require('express')
 const faunadb = require('faunadb'), q = faunadb.query
 const fetch = require('node-fetch')
+const cheerio = require('cheerio')
+
 require('dotenv').config()
 
 const FAUNA_DB_SECRET = process.env.FAUNADB_TOKEN
@@ -147,5 +150,15 @@ app.get('/twitch/user/:user/drunk_description/:factor', (req, res) => {
 })
 app.get('/drunk/:text/:factor', (req, res) => {
     res.send(drunkenify(req.params.text, req.params.factor))
+})
+app.get('/valorant/:user/:id', (req, res) => {
+    fetch(`https://tracker.gg/valorant/profile/riot/${req.params.user}%23${req.params.id}/overview?playlist=competitive`)
+        .then(res => res.text())
+        .then(body => {
+            const $ = cheerio.load(body)
+            const script = $('script').get()[2].children[0].data
+            const json = JSON.parse(script.substring(script.indexOf('{'), script.indexOf(';')))
+            res.send(json['stats']['segments'][`valorant|riot|${req.params.user}#${req.params.id}`].find(i => i.type === 'season')['stats']['rank']['metadata']['tierName'])
+        })
 })
 app.listen(PORT)
